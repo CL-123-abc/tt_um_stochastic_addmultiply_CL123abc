@@ -3,6 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+
+/*
+ * Copyright (c) 2024 David Parent
+ * SPDX-License-Identifier: Apache-2.0
+ * tt_um_davidparent_prbs31
+ */
+
 `default_nettype none
 
 module tt_um_stochastic_multiplier_CL123abc(
