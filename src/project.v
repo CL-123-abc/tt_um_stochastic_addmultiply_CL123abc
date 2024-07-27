@@ -15,13 +15,22 @@ module tt_um_stochastic_multiplier_CL123abc(
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
-
+    reg [30:0] lfsr; 
+    always @(posedge clk or posedge rst_n) begin
+        if (rst_n) begin
+        lfsr <= 31'd1; // Reset counter
+    end else begin
+        // Increment counter on each clock cycle
+        lfsr[0] <= lfsr[27] ^ lfsr[30] ;
+        lfsr[30:1] <=lfsr[29:0] ;  
+    end
+end  
   // All output pins must be assigned. If not used, assign to 0.
-  assign uo_out  = ui_in + uio_in;  // Example: ou_out is the sum of ui_in and uio_in
+  assign uo_out[0] =lfsr[30] ;
   assign uio_out = 0;
   assign uio_oe  = 0;
-
+  assign uo_out[7:1]= 7'd0;
   // List all unused inputs to prevent warnings
-  wire _unused = &{ena, clk, rst_n, 1'b0};
-
+    wire _unused = &{ena, uio_in, ui_in, 1'b0}; 
 endmodule
+
