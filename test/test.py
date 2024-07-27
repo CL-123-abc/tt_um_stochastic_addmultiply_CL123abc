@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: © 2024 Tiny Tapeout
 # SPDX-License-Identifier: MIT
-#imnport the coco functionality
+#import the coco functionality
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
@@ -16,7 +16,7 @@ PRBSO[prbs_size-1]=1
 n_clock=10000
 #set output lists to 1
 out=[1]*(n_clock)
-# Run thoughthe simulation to create the idealized output.
+# Run though the simulation to create the idealized output.
 for i in range(n_clock):
   #input the feedback
   PRBSN[0]=PRBSO[27]^PRBSO[30]
