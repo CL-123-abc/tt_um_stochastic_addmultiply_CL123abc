@@ -8,11 +8,10 @@ You can also include images in this folder and reference them in the markdown. E
 -->
 
 ## How it works
-
-NA
+Stochastic Multiplier. 
 
 ## How to test
-NA
+Input and output.
 
 ## External hardware
-NA
+ADALM2000
