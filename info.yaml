@@ -22,20 +22,20 @@ project:
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:
   # Inputs
-  ui[0]: ""
-  ui[1]: ""
-  ui[2]: ""
-  ui[3]: ""
-  ui[4]: ""
-  ui[5]: ""
-  ui[6]: ""
-  ui[7]: ""
+  ui[0]: "input_prob_0"
+  ui[1]: "input_prob_1"
+  ui[2]: "input_prob_2"
+  ui[3]: "input_prob_3"
+  ui[4]: "input_prob_4"
+  ui[5]: "input_prob_5"
+  ui[6]: "input_prob_6"
+  ui[7]: "input_prob_7"
 
   # Outputs
-  uo[0]: "out1"
-  uo[1]: ""
-  uo[2]: ""
-  uo[3]: ""
+  uo[0]: "output_prob_0"
+  uo[1]: "output_prob_1"
+  uo[2]: "output_prob_2"
+  uo[3]: "overflow"
   uo[4]: ""
   uo[5]: ""
   uo[6]: ""
