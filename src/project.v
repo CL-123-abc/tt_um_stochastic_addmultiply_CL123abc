@@ -22,8 +22,7 @@ module tt_um_stochastic_multiplier_CL123abc(
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
-    reg [30:0] lfsr_1, lfsr_2;
-    reg [7:0] input_prob;
+	reg [30:0] lfsr_1, lfsr_2;
     reg SN_Bit_1, SN_Bit_2, SN_Bit_Out;
     reg [3:0] clk_counter;
     reg [2:0] prob_counter;
