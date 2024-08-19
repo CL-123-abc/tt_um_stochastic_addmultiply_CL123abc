@@ -29,7 +29,7 @@ module tt_um_stochastic_multiplier_CL123abc(
     reg [7:0] clk_counter;
     reg [6:0] prob_counter;
     reg over_flag;
-    reg [32:0] average;
+	reg [31:0] average;
     
     D_FF SN(.clk(clk), .D(SN_Bit_1), .Q(SN_Q));
     
