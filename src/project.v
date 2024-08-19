@@ -23,13 +23,13 @@ module tt_um_stochastic_multiplier_CL123abc(
     input  wire       clk,      // clock
     input  wire       rst_n    // reset_n - low to reset
 );
-	reg [30:0] lfsr_1;
-	wire SN_Q;
+    reg [30:0] lfsr_1;
+    wire SN_Q;
     reg SN_Bit_1, SN_Bit_Out; 
     reg [7:0] clk_counter;
     reg [6:0] prob_counter;
     reg over_flag;
-    reg [7:0] average;
+	reg [32:0] average;
     
     D_FF SN(.clk(clk), .D(SN_Bit_1), .Q(SN_Q));
     
@@ -41,7 +41,7 @@ module tt_um_stochastic_multiplier_CL123abc(
 	    clk_counter <= 8'b0000; // Reset clk counter
 	    prob_counter <= 7'b000; // Reset output counter
 	    over_flag <= 0; // Reset overflag
-	    average <= 1'b0;
+	    average <= 0;
         end else begin
         // Increment counter on each clock cycle
         lfsr_1[0] <= lfsr_1[27] ^ lfsr_1[30] ;
