@@ -1,24 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 11.08.2024 16:20:53
-// Design Name: 
-// Module Name: test_tb
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
-
 /*
  * Copyright (c) 2024 Ciecen Lestari
  * SPDX-License-Identifier: Apache-2.0
