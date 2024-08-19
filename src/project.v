@@ -29,7 +29,7 @@ module tt_um_stochastic_multiplier_CL123abc(
     reg [7:0] clk_counter;
     reg [6:0] prob_counter;
     reg over_flag;
-	reg [32:0] average;
+    reg [32:0] average;
     
     D_FF SN(.clk(clk), .D(SN_Bit_1), .Q(SN_Q));
     
@@ -66,7 +66,7 @@ module tt_um_stochastic_multiplier_CL123abc(
 	    end 
 	    
 	    if (clk_counter == 8'b10000000) begin // output only when clk_counter has counted 256 cycles. Skip every 257th bit to output
-	    average <= {over_flag, prob_counter} >> 4;
+		    average <= {over_flag, prob_counter,1'b0} >> 4;
 	    
 	    over_flag <= 0; //Reset over_flag
 	    prob_counter <= 7'b0000000; // Reset prob_counter
@@ -78,8 +78,7 @@ module tt_um_stochastic_multiplier_CL123abc(
     end
 end  
   // All output pins must be assigned. If not used, assign to 0.
-  assign uo_out[3:0] = average[3:0];
-  assign uo_out[7:4] = 0;
+  assign uo_out[7:0] = average[7:0];
   assign uio_out = 0;
   assign uio_oe  = 0;
   // List all unused inputs to prevent warnings
