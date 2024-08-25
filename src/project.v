@@ -38,8 +38,8 @@ module tt_um_stochastic_multiplier_CL123abc(
     
     always @(posedge clk or posedge rst_n) begin
         if (rst_n) begin
-        lfsr_1 <= 31'd1; // Reset 1st counter
-	    lfsr_2 <= 31'd2; // Reset 2nd counter to different value
+        lfsr_1 <= 31'd17301504; // Reset 1st counter
+	    lfsr_2 <= 31'd268435584; // Reset 2nd counter to different value
 	    SN_Bit_1 <= 1'b0; // Reset SN bits
 	    SN_Bit_2 <= 1'b0; 
         SN_Bit_Out <= 1'b0; 
@@ -86,9 +86,9 @@ module tt_um_stochastic_multiplier_CL123abc(
     end 
 end  
   // All output pins must be assigned. If not used, assign to 0.
-  assign uo_out[7:0] = input_bout1[7:0]; //average [7:0] are the 8th to 1st bits of the 9bit probability.
-  assign uio_out[0] = input_bout1[8]; // average[9] is the over_flag and if it is 1 something's wrong since we are multiplying fraction.
-  assign uio_out[7:1] = 7'b0000000;    // average[8] is the MSB of the 9bit probability, being positive if 1 and negative if 0
+  assign uo_out[7:0] = average[7:0]; //average [7:0] are the 8th to 1st bits of the 9bit probability.
+  assign uio_out[1:0] = average[9:8]; // average[9] is the over_flag and if it is 1 something's wrong since we are multiplying fraction.
+  assign uio_out[7:2] = 6'b000000;    // average[8] is the MSB of the 9bit probability, being positive if 1 and negative if 0
   assign uio_oe[7:0]  = 8'b11111111;
   // List all unused inputs to prevent warnings
   wire _unused = &{ena, ui_in[7:2], uio_in, 1'b0}; 
