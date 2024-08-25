@@ -29,7 +29,7 @@ module tt_um_stochastic_multiplier_CL123abc(
     reg [17:0] clk_counter; // Used mainly to count how many cycles before output.
     reg [16:0] prob_counter;// Used as part of upcounter to count number of 1s
     reg over_flag; // Used as part of the upcounter to determine if overflow has happened
-    reg [9:0] average; 
+    //reg [9:0] average; 
   
     bitstream_to_9bit_input SN_Bit_1_Input(.clk(clk), .rst_n(rst_n), .input_bit(ui_in[0]), .output_bitseq(input_bitseq_1));
     bitstream_to_9bit_input SN_Bit_2_Input(.clk(clk), .rst_n(rst_n), .input_bit(ui_in[1]), .output_bitseq(input_bitseq_2));
@@ -46,7 +46,7 @@ module tt_um_stochastic_multiplier_CL123abc(
 	    clk_counter <= 18'b0; // Reset clk counter
 	    prob_counter <= 17'b0; // Reset output counter
 	    over_flag <= 0; // Reset overflag
-        average <= 0;
+        //average <= 0;
         end else begin
         
         // Increment counter on each clock cycle
@@ -75,7 +75,7 @@ module tt_um_stochastic_multiplier_CL123abc(
 	        end
 	    end 
 	    if (clk_counter == 18'd131072) begin // output only when clk_counter has counted 2^17 cycles. Skip bit 2^17 + 1 to output and go back to reset.
-	    average <= {over_flag,prob_counter[16:8]}; // Currently taking value per 2^17 clk cycles for 9 bit.
+	    //average <= {over_flag,prob_counter[16:8]}; // Currently taking value per 2^17 clk cycles for 9 bit.
 	    over_flag <= 0; //Reset over_flag
 	    prob_counter <= 17'b0; // Reset prob_counter
 	    clk_counter <= 18'b0; //Reset clock counter
@@ -88,7 +88,7 @@ end
   // All output pins must be assigned. If not used, assign to 0.
   assign uo_out[7:0] = input_bout1[7:0]; //average [7:0] are the 8th to 1st bits of the 9bit probability.
   assign uio_out[0] = input_bout1[8]; // average[9] is the over_flag and if it is 1 something's wrong since we are multiplying fraction.
-  assign uio_out[7:2] = 7'b0000000;    // average[8] is the MSB of the 9bit probability, being positive if 1 and negative if 0
+  assign uio_out[7:1] = 7'b0000000;    // average[8] is the MSB of the 9bit probability, being positive if 1 and negative if 0
   assign uio_oe[7:0]  = 8'b11111111;
   // List all unused inputs to prevent warnings
   wire _unused = &{ena, ui_in[7:2], uio_in, 1'b0}; 
@@ -104,8 +104,8 @@ reg enable; // Only takes input when enable is 1
 
 always @(posedge clk or posedge rst_n)begin
     if(rst_n) begin // Reset everything
-    output_bitseq <= 17'b0;
-    output_bitcounter <= 17'b0;
+    output_bitseq <= 9'b0;
+    output_bitcounter <= 9'b0;
     clk_bitcounter <= 17'b0;
     enable <= 1'b1;
     end
@@ -136,12 +136,13 @@ endmodule
 module input_checker(input_bitseq, output_bitseq); // Will only be used for the self multiplier
 input wire [8:0] input_bitseq;
 output reg [8:0] output_bitseq;
+assign output_bitseq = input_bitseq;
 always@* begin
     //if(input_bitseq > 9'b100001111) 
         //output_bitseq <= 9'b100001111;
     //else if (input_bitseq < 9'b011110001)
         //output_bitseq <= 9'b011110001;
     //else
-        output_bitseq <= input_bitseq;
+        //output_bitseq <= input_bitseq;
 end
 endmodule
