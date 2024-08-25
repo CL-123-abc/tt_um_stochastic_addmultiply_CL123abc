@@ -29,7 +29,7 @@ module tt_um_stochastic_multiplier_CL123abc(
     reg [17:0] clk_counter; // Used mainly to count how many cycles before output.
     reg [16:0] prob_counter;// Used as part of upcounter to count number of 1s
     reg over_flag; // Used as part of the upcounter to determine if overflow has happened
-    //reg [9:0] average; 
+    reg [9:0] average; 
   
     bitstream_to_9bit_input SN_Bit_1_Input(.clk(clk), .rst_n(rst_n), .input_bit(ui_in[0]), .output_bitseq(input_bitseq_1));
     bitstream_to_9bit_input SN_Bit_2_Input(.clk(clk), .rst_n(rst_n), .input_bit(ui_in[1]), .output_bitseq(input_bitseq_2));
@@ -46,7 +46,7 @@ module tt_um_stochastic_multiplier_CL123abc(
 	    clk_counter <= 18'b0; // Reset clk counter
 	    prob_counter <= 17'b0; // Reset output counter
 	    over_flag <= 0; // Reset overflag
-        //average <= 0;
+        average <= 0;
         end else begin
         
         // Increment counter on each clock cycle
@@ -75,7 +75,7 @@ module tt_um_stochastic_multiplier_CL123abc(
 	        end
 	    end 
 	    if (clk_counter == 18'd131072) begin // output only when clk_counter has counted 2^17 cycles. Skip bit 2^17 + 1 to output and go back to reset.
-	    //average <= {over_flag,prob_counter[16:8]}; // Currently taking value per 2^17 clk cycles for 9 bit.
+	    average <= {over_flag,prob_counter[16:8]}; // Currently taking value per 2^17 clk cycles for 9 bit.
 	    over_flag <= 0; //Reset over_flag
 	    prob_counter <= 17'b0; // Reset prob_counter
 	    clk_counter <= 18'b0; //Reset clock counter
