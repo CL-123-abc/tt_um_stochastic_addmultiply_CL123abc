@@ -46,8 +46,8 @@ async def test_project(dut):
     await ClockCycles(dut.clk,1) 
     test_out_prob = 0
     #Set input sample
-    input_array1 = [0,1,1,0,0,0,0,0,0,0]
-    input_array2 = [0,1,1,0,0,0,0,0,0,0]
+    input_array1 = [0,0,0,0,0,0,0,1,1,0]
+    input_array2 = [0,0,0,0,0,0,0,1,1,0]
     #Compare output to theory for each clock cycle
     for i in range(0,n_clock):
         dut.ui_in[0].value = input_array1[i%10]
