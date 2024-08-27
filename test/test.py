@@ -54,7 +54,7 @@ async def test_project(dut):
         dut.ui_in[0].value = input_array1[i%10]
         dut.ui_in[1].value = input_array2[i%10]
         # Wait for 1 clock cycles to see the output values
-        await ClockCycles(dut.clk,1)
+        await ClockCycles(dut.clk, 131072)
         
         #The following assertion is just an example of how to check the output values.
     
