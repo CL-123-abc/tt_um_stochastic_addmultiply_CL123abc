@@ -137,12 +137,12 @@ module input_checker(input_bitseq, output_bitseq); // Will only be used for the 
 input wire [8:0] input_bitseq;
 output reg [8:0] output_bitseq;
 assign output_bitseq = input_bitseq;
-always@* begin
+//always@* begin
     //if(input_bitseq > 9'b100001111) 
         //output_bitseq <= 9'b100001111;
     //else if (input_bitseq < 9'b011110001)
         //output_bitseq <= 9'b011110001;
     //else
         //output_bitseq <= input_bitseq;
-end
+//end
 endmodule
