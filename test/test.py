@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: © 2024 Tiny Tapeout
 # SPDX-License-Identifier: MIT
 #import the coco functionality
-#Testing a bipolar SN multiplier with 9-bit inputs 
+#Testing a bipolar SN multiplier and adder with 9-bit inputs 
 
 #import cocotb 
 import cocotb
@@ -50,6 +50,7 @@ async def test_project(dut):
     input_array2 = [0,0,0,0,0,0,1,1,0,0] # -1/4 
     # 10th bit is not read, expected result 1/16
     #Compare output to theory for each clock cycle
+    dut.ui_in[2].value = 0; #Set multiplier mode
     for i in range(0,n_clock):
         dut.ui_in[0].value = input_array1[i%10]
         dut.ui_in[1].value = input_array2[i%10]
