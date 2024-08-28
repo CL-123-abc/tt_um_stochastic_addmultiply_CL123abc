@@ -14,7 +14,7 @@ n_clock = 1000000
 async def test_project(dut):
     dut._log.info("Start")
     # Set the clock period to 10 us (100 KHz)
-    clock = Clock(dut.clk, 20, units="ns")
+    clock = Clock(dut.clk, 2, units="us")
     #Start the clock
     cocotb.start_soon(clock.start())
     
