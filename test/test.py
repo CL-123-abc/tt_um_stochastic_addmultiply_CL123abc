@@ -7,7 +7,7 @@
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
-n_clock = 1000000
+n_clock = 100000
             
 #Start the test
 @cocotb.test()
