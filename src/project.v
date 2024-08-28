@@ -38,9 +38,14 @@ module tt_um_stochastic_addmultiply_CL123abc(
     reg [9:0] average; 
     reg mode;
   
-    bitstream_to_9bit_input SN_Input(.clk(clk), .clk_counter(clk_counter), .rst_n(rst_n), .input_bit_1(ui_in[0]), .output_bitseq_1(input_bitseq_1), .input_bit_2(ui_in[1]), .output_bitseq_2(input_bitseq_2));
-    input_checker incheck_1(.input_bitseq(input_bitseq_1), .output_bitseq(input_bout1));
-    input_checker incheck_2(.input_bitseq(input_bitseq_2), .output_bitseq(input_bout2));
+    bitstream_to_9bit_input SN_Input(.clk(clk), .clk_counter(clk_counter), .rst_n(rst_n), 
+									 .input_bit_1(ui_in[0]), .output_bitseq_1(input_bitseq_1), 
+									 .input_bit_2(ui_in[1]), .output_bitseq_2(input_bitseq_2));
+    //input_checker incheck_1(.input_bitseq(input_bitseq_1), .output_bitseq(input_bout1));
+    //input_checker incheck_2(.input_bitseq(input_bitseq_2), .output_bitseq(input_bout2));
+
+	assign input_bout1 = input_bitseq_1;
+	assign input_bout2 = input_bitseq_2;
     
     // Comparator used to generate Bipolar Stochastic Number from 4-bit probability.
 	// Compare RN from LFSR with probability wanted in BN and generate 1 when RN < BN 
@@ -152,10 +157,10 @@ always @(posedge clk or posedge rst_n)begin
 end
 endmodule
 
-module input_checker(input_bitseq, output_bitseq); // Will only be used for the self multiplier
-input wire [8:0] input_bitseq;
-output reg [8:0] output_bitseq;
-assign output_bitseq = input_bitseq;
+//module input_checker(input_bitseq, output_bitseq); // Will only be used for the self multiplier
+//input wire [8:0] input_bitseq;
+//output reg [8:0] output_bitseq;
+
 //always@* begin
     //if(input_bitseq > 9'b100001111) 
         //output_bitseq <= 9'b100001111;
@@ -164,4 +169,4 @@ assign output_bitseq = input_bitseq;
     //else
        //output_bitseq <= input_bitseq;
 //end
-endmodule
+//endmodule
