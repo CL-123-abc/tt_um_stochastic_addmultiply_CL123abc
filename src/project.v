@@ -123,10 +123,10 @@ reg adjust;
 
 always @(posedge clk or posedge rst_n)begin
     if(rst_n) begin // Reset everything
-    output_bitseq_1 <= 17'b0;
-    output_bitseq_2 <= 17'b0;
-    output_bitcounter_1 <= 17'b0;
-    output_bitcounter_2 <= 17'b0;
+    output_bitseq_1 <= 9'b0;
+    output_bitseq_2 <= 9'b0;
+    output_bitcounter_1 <= 9'b0;
+    output_bitcounter_2 <= 9'b0;
     enable <= 1'b1;
     adjust <= 1'b0;
     end
