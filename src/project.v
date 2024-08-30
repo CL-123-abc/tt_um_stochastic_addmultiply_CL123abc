@@ -142,10 +142,8 @@ always @(posedge clk or posedge rst_n)begin
         output_bitseq_2 <= output_bitcounter_2;
         enable <= 0;
         end
-        else if (clk_counter == 18'd14 && adjust == 0) begin
-        output_bitseq_1 <= output_bitcounter_1;
-        output_bitseq_2 <= output_bitcounter_2;
-        enable <= 0;
+	    else if (adjust == 1) begin
+        // adjust for the offset caused by the output not being an interval of 10 so that the input will be captured correctly
         end
     end
     else if(enable == 0 && rst_n == 0) begin
