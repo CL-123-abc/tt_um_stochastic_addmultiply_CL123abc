@@ -78,32 +78,14 @@ module tt_um_stochastic_addmultiply_CL123abc(
 	    			prob_counter <= 17'b0; 
 	    			over_flag <= 0; 
         			average <= 0;
-			        mode <= 0;
         		end 
 			else 
 				begin
-        			
-        			if (clk_counter == 0) 
-						begin
-        					mode <= ui_in[2];
-        				end
+        		
         			lfsr[0] <= lfsr[27] ^ lfsr[30] ;
         			lfsr[30:1] <= lfsr[29:0] ;
-        			if (mode == 0)
-						begin       
-	    					SN_Bit_Out <= !(SN_Bit_1 ^ SN_Bit_2) ;
-	    				end 
-					else if (mode == 1)
-						begin 		
-	       					if(SN_Bit_sel == 0) 
-								begin
-	       							SN_Bit_Out <= SN_Bit_1;
-	      						end 
-							else if (SN_Bit_sel == 1) 
-								begin
-	       							SN_Bit_Out <= SN_Bit_2;
-	       						end
-	    				end
+					
+        			
 	    			if (SN_Bit_Out == 1) 
 						begin
 	        				if (prob_counter == 17'd131071) 
@@ -163,8 +145,9 @@ input wire [17:0] clk_counter;
 input wire clk, rst_n, input_bit_1, input_bit_2;
 output reg [8:0] output_bitseq_1, output_bitseq_2; 
 reg [8:0] output_bitcounter_1, output_bitcounter_2;
-reg enable; 
-reg adjust;
+reg loop; 
+reg [2:0] output_case;
+reg [4:0] adjustment;
 
 // SEQUENTIAL LOGIC BLOCK:
 //
@@ -178,54 +161,149 @@ always @(posedge clk or posedge rst_n)
     			output_bitseq_2 <= 9'b0;
     			output_bitcounter_1 <= 9'b0;
     			output_bitcounter_2 <= 9'b0;
-    			enable <= 1'b1;
-    			adjust <= 1'b0;
+    			loop <= 1'b0;
+				output_case <= 2'b0;
+    			adjustment <= 5'b0;
     		end
-    	else if(enable == 1 && rst_n == 0)
+    	else 
 			begin
-        		output_bitcounter_1 <= (output_bitcounter_1 >> 1); 
-        		output_bitcounter_1[8] <= input_bit_1; 
-        
-        		output_bitcounter_2 <= (output_bitcounter_2 >> 1); 
-        		output_bitcounter_2[8] <= input_bit_2; 
-        
-        		if(clk_counter == 18'd10 && adjust == 0) 
-					begin 
-        				output_bitseq_1 <= output_bitcounter_1;
-        				output_bitseq_2 <= output_bitcounter_2;
-        				enable <= 0;
-        			end
-	    		else if (adjust == 1) 
+				if (loop == 0)
 					begin
-        			// adjust for the offset caused by the output not being an interval of 10 so that the input will be captured correctly
-        			end
-    		end
-    	else if(enable == 0 && rst_n == 0) 
-			begin
-        		if(clk_counter == 18'd131072)
-					begin 
-        				enable <= 1;
-        				adjust <= 1;
-        			end
-    		end
+						if (clk_counter == 0)
+							begin
+								case (output_case)
+                                3'd000: adjustment <= 5'd10;
+                                3'b001: adjustment <= 5'd16;
+                                3'b010: adjustment <= 5'd12;
+                                3'b011: adjustment <= 5'd18;
+                                3'b100: adjustment <= 5'd14;
+								endcase
+							end
+						output_bitcounter_1 <= (output_bitcounter_1 >> 1);
+						output_bitcounter_1[8] <= input_bit_1;
+						output_bitcounter_2 <= (output_bitcounter_2 >> 1);
+						output_bitcounter_2[8] <= input_bit_2;
+						if(clk_counter == adjustment)
+							begin
+								output_bitseq_1 <= output_bitcounter_1;
+								output_bitseq_2 <= output_bitcounter_2;
+								loop <= 1;
+							end
+					end
+				else if (loop == 1)
+					begin
+						if (clk_counter == 18'd131072)
+							begin
+								loop <= 0;
+								if(output_case == 3'b100)
+									output_case <= 3'b000;
+								else
+									output_case <= output_case +3'b001;
+							end
+					end
+			end
 	end
 endmodule
 
-//module input_checker(input_precheck, output_postcheck); 
-//input wire [8:0] input_precheck;
-//output reg [8:0] output_postcheck;
+module input_checker(input_precheck, output_postcheck); 
+input wire [8:0] input_precheck;
+output reg [8:0] output_postcheck;
 
-// SEQUENTIAL LOGIC BLOCK:
+//SEQUENTIAL LOGIC BLOCK:
 //
 //
 
-//always@(input_precheck) 
-	//begin
-		//if(input_precheck > 9'b100001111) 
-    	    //output_postcheck <= 9'b100001111;
-		//else if (input_precheck < 9'b011110001)
-     	   //output_postcheck <= 9'b011110001;
-    	//else
-    	   //output_postcheck <= input_precheck;
-	//end
-//endmodule
+always@(input_precheck) 
+	begin
+		if(input_precheck > 9'b100001111) 
+    	    output_postcheck <= 9'b100001111;
+		else if (input_precheck < 9'b011110001)
+     	   output_postcheck <= 9'b011110001;
+    	else
+    	   output_postcheck <= input_precheck;
+	end
+endmodule
+
+module serial_output(clk, rst_n, input_bits, output_bit);
+//WIRES and REG
+//
+//
+
+input wire clk, rst_n;
+input wire [8:0] input_bits;
+reg [8:0] bitseq;
+reg [3:0] counter;
+output reg output_bit;
+
+//SEQUENTIAL LOGIC BLOCK
+//
+//
+
+always@(posedge clk or posedge rst_n)
+    begin
+        if(rst_n) 
+            begin
+                bitseq <= 8'b0;
+                counter <= 4'b0;
+                output_bit <= 1'b0;
+            end
+        else 
+            begin
+                if (counter == 0)
+                    begin
+                        output_bit <= input_bits[0];
+                        bitseq <= input_bits >> 1;
+                        counter <= counter + 4'b1;
+                    end
+                if (counter == 4'd9)
+                    begin
+                        output_bit <= 0;
+                        counter <= 4'b0;
+                    end
+                else if (counter != 0 && counter != 4'd9)
+                    begin
+                        bitseq <= bitseq >> 1;
+                        output_bit <= bitseq[0];
+                        counter <= counter + 4'b1;
+                    end
+            end
+    end
+endmodule
+
+module multiplier(SN_Bit_1, SN_Bit_2, SN_Bit_Out)
+input wire SN_Bit_1, SN_Bit_2;
+output wire SN_Bit_Out;
+assign SN_Bit_Out = !(SN_Bit_1 ^ SN_Bit_2);
+endmodule
+
+module adder(SN_Bit_1, SN_Bit_2, SN_Bit_sel, SN_Bit_Out)
+input wire SN_Bit_1, SN_Bit_2, SN_Bit_sel;
+output wire SN_Bit_Out;
+always@(SN_Bit_1 or SN_Bit_2)
+	begin
+		if(SN_Bit_sel == 0)
+			SN_Bit_Out <= SN_Bit_1;
+		else if (SN_Bit_sel == 1)
+			SN_Bit_Out <= SN_Bit_2;
+	end
+endmodule
+
+module self_multiplier(clk, rst_n, SN_Bit_1, SN_Bit_Out)
+input wire clk, rst_n, SN_Bit_1;
+output wire SN_Bit_Q, SN_Bit_Out;
+D_FF delay_SN_Bit(clk, rst_n, SN_Bit_1, SN_Bit_Q)
+assign SN_Bit_Out = !(SN_Bit_1 ^ SN_Bit_Q);
+endmodule
+
+module D_FF(clk, rst_n, D, Q)
+input wire clk, rst_n, D;
+output reg Q;
+always@(posedge clk or posedge rst_n)
+	begin
+		if(rst_n)
+			Q <= 0;
+		else
+			Q <= D;
+	end
+endmodule
+
