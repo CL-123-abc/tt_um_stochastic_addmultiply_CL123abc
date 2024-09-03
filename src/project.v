@@ -77,7 +77,7 @@ module tt_um_stochastic_addmultiply_CL123abc(
 	 *
 	 * /////////////////////////////////////////////////////////////////////////////
 	 * SUBMODULE NAME:
-  
+       LFSR (.clk(), .rst_n(), .lfsr());
      * SUBMODULE DESCRIPTION:
 	 * 
      * INPUTS:
@@ -88,7 +88,8 @@ module tt_um_stochastic_addmultiply_CL123abc(
 	 *
 	 * /////////////////////////////////////////////////////////////////////////////
 	 * SUBMODULE NAME:
-  
+  	   SN_Generators (.lfsr(), .Input_1(), .Input_2(), .Input_3(),
+	                  .SN_Bit_1(), .SN_Bit_2(), .SN_Bit_3(), .SN_Bit_sel());
      * SUBMODULE DESCRIPTION:
 	 * 
      * INPUTS:
