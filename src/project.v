@@ -299,11 +299,6 @@ endmodule
 module LFSR(clk, rst_n, lfsr);
 input wire clk, rst_n;
 output reg [30:0] lfsr;
-initial //ASIC no initial!!
-    begin
-        lfsr <= 31'd134995;
-    end
-
 always@(posedge clk or posedge rst_n)
     begin
         if (rst_n == 1)
