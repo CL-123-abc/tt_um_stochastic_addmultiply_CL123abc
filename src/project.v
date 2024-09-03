@@ -145,20 +145,17 @@ module tt_um_stochastic_addmultiply_CL123abc(
 	   resets after 131072+1 or (2^17)+1 clk cycles counting 0th cycle.
 	*/
 	
-    always @(posedge clk or posedge rst_n) 
-		begin
-        	if (rst_n) 
-				begin
+    always @(posedge clk or posedge rst_n) begin
+        	if (rst_n) begin
 	    			clk_counter <= 0; 
-        		end 
-			else 
-				begin
-        		    if(clk_counter == 18'd131072)
-        		        clk_counter <= 0;
-        		    else
-        		      clk_counter <= clk_counter + 18'd1;
-    			end 
-		end  
+        	end 
+			else begin
+        		if(clk_counter == 18'd131072)
+        		    clk_counter <= 0;
+        		else
+        		    clk_counter <= clk_counter + 18'd1;
+    		end 
+	end  
   
   // PIN LAYOUT
   // All output pins must be assigned. If not used, assign to 0.
@@ -186,65 +183,53 @@ reg loop;
 reg [3:0] output_case;
 reg [4:0] adjustment;
 
-always @(posedge clk or posedge rst_n)
-	begin
-    	if(rst_n) 
-			begin 
-    			output_bitseq_1 <= 9'b0;
-    			output_bitseq_2 <= 9'b0;
-    			output_bitcounter_1 <= 9'b0;
-    			output_bitcounter_2 <= 9'b0;
-    			loop <= 1'b0;
-				output_case <= 4'b0;
-    			adjustment <= 5'd9;
-    		end
-    	else 
-			begin
-				if (loop == 0)
-					begin
-						if (clk_counter == 0)
-							begin
-								case (output_case)
-                                4'd0: adjustment <= 5'd9;
-                                4'd1: adjustment <= 5'd16;
-                                4'd2: adjustment <= 5'd13;
-                                4'd3: adjustment <= 5'd10; 
-                                4'd4: adjustment <= 5'd17; 
-                                4'd5: adjustment <= 5'd14;
-                                4'd6: adjustment <= 5'd11;   
-                                4'd7: adjustment <= 5'd18;   
-                                4'd8: adjustment <= 5'd17; 
-                                4'd9: adjustment <= 5'd12;   
-                                default:;
-								endcase
-							end
-						output_bitcounter_1 <= (output_bitcounter_1 >> 1);
-						output_bitcounter_1[8] <= input_bit_1;
-						output_bitcounter_2 <= (output_bitcounter_2 >> 1);
-						output_bitcounter_2[8] <= input_bit_2;
-						if(clk_counter[4:0] == adjustment)
-							begin
-								output_bitseq_1 <= output_bitcounter_1;
-								output_bitseq_2 <= output_bitcounter_2;
-								loop <= 1;
-							end
-					end
-				else if (loop == 1)
-					begin
-						if (clk_counter == 18'd131072)
-							begin
-								if(output_case == 4'd9)
-								    begin
-									   output_case <= 4'd0;
-									end
-								else
-								    begin
-									   output_case <= output_case + 4'd1;
-									end
-								loop <= 0;
-							end
-					end
+	always @(posedge clk or posedge rst_n) begin
+    	if(rst_n) begin 
+    		output_bitseq_1 <= 9'b0;
+    		output_bitseq_2 <= 9'b0;
+    		output_bitcounter_1 <= 9'b0;
+    		output_bitcounter_2 <= 9'b0;
+    		loop <= 1'b0;
+			output_case <= 4'b0;
+    		adjustment <= 5'd9;
+    	end
+    	else begin
+			if (loop == 0) begin
+				if (clk_counter == 0) begin
+					case (output_case)
+                    4'd0: adjustment <= 5'd9;
+                    4'd1: adjustment <= 5'd16;
+                    4'd2: adjustment <= 5'd13;
+                    4'd3: adjustment <= 5'd10; 
+                    4'd4: adjustment <= 5'd17; 
+                    4'd5: adjustment <= 5'd14;
+                    4'd6: adjustment <= 5'd11;   
+                    4'd7: adjustment <= 5'd18;   
+                    4'd8: adjustment <= 5'd17; 
+                    4'd9: adjustment <= 5'd12;   
+                    default:;
+					endcase
+				end
+				output_bitcounter_1 <= (output_bitcounter_1 >> 1);
+				output_bitcounter_1[8] <= input_bit_1;
+				output_bitcounter_2 <= (output_bitcounter_2 >> 1);
+				output_bitcounter_2[8] <= input_bit_2;
+				if(clk_counter[4:0] == adjustment) begin
+					output_bitseq_1 <= output_bitcounter_1;
+					output_bitseq_2 <= output_bitcounter_2;
+					loop <= 1;
+				end
 			end
+			else if (loop == 1) begin
+				if (clk_counter == 18'd131072) begin
+					if(output_case == 4'd9)
+						output_case <= 4'd0;
+					else 
+						output_case <= output_case + 4'd1;
+				loop <= 0;
+				end
+			end
+		end
 	end
 endmodule
 
@@ -266,47 +251,41 @@ reg [8:0] bitseq;
 reg [3:0] counter;
 output reg output_bit;
 
-always@(posedge clk or posedge rst_n)
-    begin
-        if(rst_n) 
-            begin
-                bitseq <= 9'b0;
+	always@(posedge clk or posedge rst_n) begin
+		if(rst_n) begin
+            bitseq <= 9'b0;
+            counter <= 4'b0;
+            output_bit <= 1'b0;
+        end
+        else begin
+			if (counter == 0) begin
+            	output_bit <= input_bits[0];
+                bitseq <= input_bits >> 1;
+                counter <= counter + 4'b1;
+            end
+			if (counter == 4'd9) begin
+                output_bit <= 0;
                 counter <= 4'b0;
-                output_bit <= 1'b0;
             end
-        else 
-            begin
-                if (counter == 0)
-                    begin
-                        output_bit <= input_bits[0];
-                        bitseq <= input_bits >> 1;
-                        counter <= counter + 4'b1;
-                    end
-                if (counter == 4'd9)
-                    begin
-                        output_bit <= 0;
-                        counter <= 4'b0;
-                    end
-                else if (counter != 0 && counter != 4'd9)
-                    begin
-                        bitseq <= bitseq >> 1;
-                        output_bit <= bitseq[0];
-                        counter <= counter + 4'b1;
-                    end
+			else if (counter != 0 && counter != 4'd9) begin
+                bitseq <= bitseq >> 1;
+                output_bit <= bitseq[0];
+                counter <= counter + 4'b1;
             end
+         end
     end
 endmodule
 
 module LFSR(clk, rst_n, lfsr);
 input wire clk, rst_n;
 output reg [30:0] lfsr;
-always@(posedge clk or posedge rst_n)
-    begin
+	always@(posedge clk or posedge rst_n) begin
         if (rst_n == 1)
             lfsr <= 31'd134995;
-        else
+        else begin
             lfsr[0] <= lfsr[27] ^ lfsr[30] ;
             lfsr[30:1] <= lfsr[29:0] ;
+		end
     end
 endmodule
 
@@ -324,12 +303,14 @@ endmodule
 module multiplier(SN_Bit_1, SN_Bit_2, SN_Bit_Out);
 input wire SN_Bit_1, SN_Bit_2;
 output wire SN_Bit_Out;
+	
 assign SN_Bit_Out = !(SN_Bit_1 ^ SN_Bit_2);
 endmodule
 
 module adder(SN_Bit_1, SN_Bit_2, SN_Bit_sel, SN_Bit_Out);
 input wire SN_Bit_1, SN_Bit_2, SN_Bit_sel;
 output wire SN_Bit_Out;
+	
 assign SN_Bit_Out = (SN_Bit_sel == 0) ? SN_Bit_1 : SN_Bit_2;
 endmodule
 
@@ -337,15 +318,17 @@ module self_multiplier(clk, rst_n, SN_Bit_1, SN_Bit_Out);
 input wire clk, rst_n, SN_Bit_1;
 output wire SN_Bit_Out; 
 wire SN_Bit_Q;
+	
 D_FF delay_SN_Bit(clk, rst_n, SN_Bit_1, SN_Bit_Q);
+	
 assign SN_Bit_Out = !(SN_Bit_1 ^ SN_Bit_Q);
 endmodule
 
 module D_FF(clk, rst_n, D, Q);
 input wire clk, rst_n, D;
 output reg Q;
-always@(posedge clk or posedge rst_n)
-	begin
+	
+	always@(posedge clk or posedge rst_n)begin
 		if(rst_n)
 			Q <= 0;
 		else
@@ -361,40 +344,32 @@ output reg [8:0] average;
 reg [16:0] prob_counter;
 //reg over_flag;
 
-always@(posedge clk or posedge rst_n)
-begin
-    if (rst_n)
-        begin
+	always@(posedge clk or posedge rst_n) begin
+		if (rst_n) begin
             average <= 0;
             prob_counter <= 0;
             //over_flag <= 0;
         end 
-    else 
-        begin
-            if (SN_Bit_Out == 1) 
-                begin
-                    if (prob_counter == 17'd131071) 
-                        begin
-		                    //over_flag <= 1; 
-		                    prob_counter <= 17'b0;
-	                    end
-	                else 
-			            begin
-	                        prob_counter <= prob_counter + 17'b1;
-	                    end
-	            end 
-	        if (clk_counter == 18'd131072) 
-				begin 
-				    case(out_set)
-				    2'b00: average <= {prob_counter[16:8]}; //Multiplier
-				    2'b01: average <= {prob_counter[16:8]}; //Adder ??
-				    2'b10: average <= {prob_counter[8:0]};  // Self-Multiplier
-				    default:;
-	    		    endcase
-	    		    //over_flag <= 0; 
-	    		    prob_counter <= 17'b0; 
-	    		end
+    	else begin
+        	if (SN_Bit_Out == 1) begin
+				if (prob_counter == 17'd131071) begin
+		            //over_flag <= 1; 
+		            prob_counter <= 17'b0;
+	            end
+	            else 
+					prob_counter <= prob_counter + 17'b1;
+	        end 
+	        if (clk_counter == 18'd131072) begin 
+				case(out_set)
+			    2'b00: average <= {prob_counter[16:8]}; //Multiplier
+			    2'b01: average <= {prob_counter[16:8]}; //Adder ??
+			    2'b10: average <= {prob_counter[8:0]};  // Self-Multiplier
+			    default:;
+	    		endcase
+	    		//over_flag <= 0; 
+	    		prob_counter <= 17'b0; 
+	    	end
 	    end
-end
+	end
 endmodule
 
