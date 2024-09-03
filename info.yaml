@@ -22,9 +22,9 @@ project:
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:
   # Inputs
-  ui[0]: "input_bitstream_1"
-  ui[1]: "input_bitstream_2"
-  ui[2]: "mode select"
+  ui[0]: "serial_input_1"
+  ui[1]: "serial_input_2"
+  ui[2]: ""
   ui[3]: ""
   ui[4]: ""
   ui[5]: ""
@@ -32,10 +32,10 @@ pinout:
   ui[7]: ""
 
   # Outputs
-  uo[0]: "output_bitstream_1"
-  uo[1]: "overflow"
-  uo[2]: ""
-  uo[3]: ""
+  uo[0]: "serial_output_mul"
+  uo[1]: "serial_output_add"
+  uo[2]: "serial_output_smul"
+  uo[3]: "clk_counter_reset"
   uo[4]: ""
   uo[5]: ""
   uo[6]: ""
