@@ -222,7 +222,7 @@ always @(posedge clk or posedge rst_n)
 						output_bitcounter_1[8] <= input_bit_1;
 						output_bitcounter_2 <= (output_bitcounter_2 >> 1);
 						output_bitcounter_2[8] <= input_bit_2;
-						if(clk_counter == adjustment)
+						if(clk_counter[4:0] == adjustment)
 							begin
 								output_bitseq_1 <= output_bitcounter_1;
 								output_bitseq_2 <= output_bitcounter_2;
@@ -270,7 +270,7 @@ always@(posedge clk or posedge rst_n)
     begin
         if(rst_n) 
             begin
-                bitseq <= 8'b0;
+                bitseq <= 9'b0;
                 counter <= 4'b0;
                 output_bit <= 1'b0;
             end
