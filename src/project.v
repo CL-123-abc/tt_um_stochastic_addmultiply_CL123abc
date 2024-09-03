@@ -3,21 +3,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// Module name: tt_um_stochastic_addmultiply_CL123abc
-// Module description: 
-// Stochastic adder, multiplier and self-multiplier that takes in 9-bit inputs and gives 9-bit outputs
-// after 2^17+1 clock cycles. 
-// 
-// INPUTS: 
-// ui_in[0] for serial input of 9bit (+1 bit buffer) probability with 1 bit buffer.
-// ui_in[1] for serial input of 9bit (+1 bit buffer) probability with 1 bit buffer.
-// The adder and multiplier take input from both inputs but the self-multiplier only takes input from ui_in[0].
-// OUTPUTS:
-// uo_out[0] for serial output of 9bit (+1 bit buffer) probability result of multiplier.
-// uo_out[1] for serial output of 9bit (+1 bit buffer) probability result of adder.
-// uo_out[2] for serial output of 9bit (+1 bit buffer) probability result of self-multiplier.
-// uo_out[3] signals the reset of the clk_counter of the module.
- 
+/* Module name: tt_um_stochastic_addmultiply_CL123abc
+ * Module description: 
+ * Stochastic adder, multiplier and self-multiplier that takes in 9-bit inputs and gives 9-bit outputs
+ * after 2^17+1 clock cycles. 
+ * 
+ * INPUTS: 
+ * ui_in[0] for serial input of 9bit (+1 bit buffer) probability with 1 bit buffer.
+ * ui_in[1] for serial input of 9bit (+1 bit buffer) probability with 1 bit buffer.
+ * The adder and multiplier take input from both inputs but the self-multiplier only takes input from ui_in[0].
+ * OUTPUTS:
+ * uo_out[0] for serial output of 9bit (+1 bit buffer) probability result of multiplier.
+ * uo_out[1] for serial output of 9bit (+1 bit buffer) probability result of adder.
+ * uo_out[2] for serial output of 9bit (+1 bit buffer) probability result of self-multiplier.
+ * uo_out[3] signals the reset of the clk_counter of the module.
+ */
+
 `default_nettype none
 
 module tt_um_stochastic_addmultiply_CL123abc(
@@ -31,10 +32,6 @@ module tt_um_stochastic_addmultiply_CL123abc(
     input  wire       rst_n     // reset_n - low to reset
 );
 	
-	// WIRES and REGS:
-	// 
-	//
-	
 	wire [8:0] input_precheck_1, input_precheck_2, input_postcheck_1;
 	wire [30:0] lfsr;
 	wire SN_Bit_1, SN_Bit_2, SN_Bit_smul_in, SN_Bit_sel;
@@ -43,20 +40,76 @@ module tt_um_stochastic_addmultiply_CL123abc(
     wire mul_bit_out, add_bit_out, smul_bit_out;
     reg [17:0] clk_counter;
     
-
-	// SUBMODULES:
-    // Submodule name:
-    // Submodule description:
-    // INPUTS:
-    //
-    // OUTPUTS:
-    //
-    // Submodule name:
-    // Submodule description:
-    // INPUTS:
-    //
-    // OUTPUTS:
-    //
+	/* SUBMODULES USED:
+     *
+     * /////////////////////////////////////////////////////////////////////////////
+	 * SUBMODULE NAME:
+	   serial_to_value_input (.clk(), .clk_counter(), .rst_n(), 
+	    					  .input_bit_1(), .output_bitseq_1(), 
+	    					  .input_bit_2(), .output_bitseq_2());
+     * SUBMODULE DESCRIPTION: 
+     * Takes in serial input (10bit) carrying the 9bit probability in bipolar representation 
+	 * and gives the 9bit value as output. The last bit in the 10 is the dummy bit.
+     * INPUTS:
+     * .clk() takes in the clk of the whole circuit.
+	 * .clk_counter() takes in the global clock counter that is controlled by the main code.
+     * .rst_n() takes in the reset of the whole circuit.
+	 * .input_bit_1() takes in the serial bitstream of input 1, 1 bit per clk cycle. 
+     * .input_bit_2() takes in the serial bitstream of input 2, 1 bit per clk cycle. 
+     * OUTPUTS:
+     * .output_bitseq_1() outputs the 9bit value of input 1.
+	 * .output_bitseq_2() outputs the 9bit value of input 1.
+     * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+	 *
+     * /////////////////////////////////////////////////////////////////////////////
+	 * SUBMODULE NAME:
+	   input_checker (.input_precheck(), .output_postcheck());
+     * SUBMODULE DESCRIPTION:
+	 * Checks the input to see if it is within the desired limits. 
+     * In this code it is only used for the self-multiplier, because the self-multiplier is scaled. 
+	 * It cannot show result values if the input exceeds the limits. 
+     * Currently, the limits are set to [9'b011110001 < input < 9'b100001111].
+     * INPUTS:
+     * .input_precheck() takes in a 9bit value to compare with the limit.
+     * OUTPUTS:
+	 * .output_postcheck() outputs a 9bit value that has already been cut to the limit.
+     * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+	 *
+	 * /////////////////////////////////////////////////////////////////////////////
+	 * SUBMODULE NAME:
+  
+     * SUBMODULE DESCRIPTION:
+	 * 
+     * INPUTS:
+     *
+     * OUTPUTS:
+	 *
+     * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+	 *
+	 * /////////////////////////////////////////////////////////////////////////////
+	 * SUBMODULE NAME:
+  
+     * SUBMODULE DESCRIPTION:
+	 * 
+     * INPUTS:
+     *
+     * OUTPUTS:
+	 *
+     * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+	 *
+     * /////////////////////////////////////////////////////////////////////////////
+	 * SUBMODULE NAME:
+  
+     * SUBMODULE DESCRIPTION:
+	 * 
+     * INPUTS:
+     *
+     * OUTPUTS:
+	 *
+     * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+	 *
+	 
+     */
   
     serial_to_value_input global_input(.clk(clk), .clk_counter(clk_counter), .rst_n(rst_n), 
 									   .input_bit_1(ui_in[0]), .output_bitseq_1(input_precheck_1), 
@@ -86,9 +139,10 @@ module tt_um_stochastic_addmultiply_CL123abc(
     value_to_serial_output add_output(.clk(clk), .rst_n(rst_n), .input_bits(add_avg), .output_bit(add_bit_out));
     value_to_serial_output smul_output(.clk(clk), .rst_n(rst_n), .input_bits(smul_avg), .output_bit(smul_bit_out));
     
-	// SEQUENTIAL LOGIC BLOCK:
-	//
-	//
+	/* SEQUENTIAL LOGIC BLOCK:
+	   The main code only controls the global clock counter and 
+	   resets after 131072+1 or (2^17)+1 clk cycles counting 0th cycle.
+	*/
 	
     always @(posedge clk or posedge rst_n) 
 		begin
@@ -106,7 +160,6 @@ module tt_um_stochastic_addmultiply_CL123abc(
 		end  
   
   // PIN LAYOUT
-  // 
   // All output pins must be assigned. If not used, assign to 0.
   assign uo_out[0] = mul_bit_out;
   assign uo_out[1] = add_bit_out; 
@@ -119,19 +172,9 @@ module tt_um_stochastic_addmultiply_CL123abc(
   wire _unused = &{ena, ui_in[7:2], uio_in, 1'b0}; 
 endmodule
 
-// SUBMODULES:
-// Submodule name:
-// Submodule description:
-// INPUTS:
-//
-// OUTPUTS:
-//
-// Submodule name:
-// Submodule description:
-// INPUTS:
-//
-// OUTPUTS:
-//
+/* SUBMODULES:
+ *
+ */
 
 module serial_to_value_input(clk, clk_counter, rst_n, input_bit_1, output_bitseq_1, input_bit_2, output_bitseq_2);
 input wire [17:0] clk_counter;
