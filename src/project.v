@@ -79,11 +79,12 @@ module tt_um_stochastic_addmultiply_CL123abc(
 	 * SUBMODULE NAME:
        LFSR (.clk(), .rst_n(), .lfsr());
      * SUBMODULE DESCRIPTION:
-	 * 
+	 * Generates and runs the LFSR, which is 31 bits long and has a seed of 31'd134995 in this code.
      * INPUTS:
-     *
+     * .clk() takes in the clk of the whole circuit.
+	 * .rst_n() takes in the reset of the whole circuit.
      * OUTPUTS:
-	 *
+	 * .lfsr() outputs the entire LFSR contents in 31-bit.
      * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 	 *
 	 * /////////////////////////////////////////////////////////////////////////////
