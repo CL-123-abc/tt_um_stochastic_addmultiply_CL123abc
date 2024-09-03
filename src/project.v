@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Ciecen Lestari
+ * Copyright (c) 2024 CL-123-abc
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -163,7 +163,8 @@ module tt_um_stochastic_addmultiply_CL123abc(
   assign uo_out[1] = add_bit_out; 
   assign uo_out[2] = smul_bit_out;
   assign uo_out[3] = clk_counter[17];
-  assign uo_out[7:4] = 4'b0;
+  assign uo_out[4] = clk;
+  assign uo_out[7:5] = 3'b0;
   assign uio_out[7:0] = 8'b0;    
   assign uio_oe[7:0]  = 8'b00000000;
   // List all unused inputs to prevent warnings
