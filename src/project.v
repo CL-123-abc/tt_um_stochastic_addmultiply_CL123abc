@@ -298,6 +298,7 @@ assign SN_Bit_1 = (lfsr[8:0] < Input_1[8:0]) ;
 assign SN_Bit_2 = ({lfsr[20:12]} < Input_2[8:0]) ;
 assign SN_Bit_3 = (lfsr[8:0] < Input_3[8:0]);
 assign SN_Bit_sel = ({lfsr[3:1], lfsr[30:26], lfsr[11]} < 9'b100000000);
+wire unused = &{1'b0, lfsr[25:21], lfsr[10:9], 1'b0};
 endmodule
 
 module multiplier(SN_Bit_1, SN_Bit_2, SN_Bit_Out);
