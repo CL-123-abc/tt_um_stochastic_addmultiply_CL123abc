@@ -1,6 +1,6 @@
 # Tiny Tapeout project information
 project:
-  title:        "Stochastic Multiplier"      # Project title
+  title:        "Stochastic Multiplier, Adder and Self-Multiplier"      # Project title
   author:       "CL-123-abc"      # Your name
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "Sample"      # One line description of what your project does
