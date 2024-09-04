@@ -65,8 +65,46 @@ module tt_um_stochastic_addmultiply_CL123abc(
     value_to_serial_output mul_output(.clk(clk), .rst_n(rst_n), .input_bits(mul_avg), .output_bit(mul_bit_out));
     value_to_serial_output add_output(.clk(clk), .rst_n(rst_n), .input_bits(add_avg), .output_bit(add_bit_out));
     value_to_serial_output smul_output(.clk(clk), .rst_n(rst_n), .input_bits(smul_avg), .output_bit(smul_bit_out));
+  
+	/* SEQUENTIAL LOGIC BLOCK:
+	   The main code only controls the global clock counter and 
+	   resets after 131072+1 or (2^17)+1 clk cycles counting 0th cycle.
+	*/
 	
-    /* SUBMODULES:
+    always @(posedge clk or posedge rst_n) begin
+        	if (rst_n) begin
+	    			clk_counter <= 0; 
+        	end 
+			else begin
+        		if(clk_counter == 18'd131072)
+        		    clk_counter <= 0;
+        		else
+        		    clk_counter <= clk_counter + 18'd1;
+    		end 
+	end  
+  
+  // PIN LAYOUT
+  // All output pins must be assigned. If not used, assign to 0.
+  
+  assign uo_out[7:0] = mul_avg[8:1];
+  assign uio_out[0] = mul_avg[0];
+  assign uio_out[7:1] = 7'b0;
+  assign uio_oe[7:0] = 8'b1;
+  
+  /*
+  assign uo_out[0] = mul_bit_out;
+  assign uo_out[1] = add_bit_out; 
+  assign uo_out[2] = smul_bit_out;
+  assign uo_out[3] = clk_counter[17];
+  assign uo_out[7:4] = 4'b0;
+  assign uio_out[7:0] = 8'b0;    
+  assign uio_oe[7:0]  = 8'b0;
+  */
+  // List all unused inputs to prevent warnings
+  wire _unused = &{ena, ui_in[7:2], uio_in, 1'b0}; 
+endmodule
+
+/* SUBMODULES:
      *
      * /////////////////////////////////////////////////////////////////////////////
 	 * SUBMODULE NAME:
@@ -137,49 +175,7 @@ module tt_um_stochastic_addmultiply_CL123abc(
      * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 	 *
 	 
-     */
-  
-	/* SEQUENTIAL LOGIC BLOCK:
-	   The main code only controls the global clock counter and 
-	   resets after 131072+1 or (2^17)+1 clk cycles counting 0th cycle.
-	*/
-	
-    always @(posedge clk or posedge rst_n) begin
-        	if (rst_n) begin
-	    			clk_counter <= 0; 
-        	end 
-			else begin
-        		if(clk_counter == 18'd131072)
-        		    clk_counter <= 0;
-        		else
-        		    clk_counter <= clk_counter + 18'd1;
-    		end 
-	end  
-  
-  // PIN LAYOUT
-  // All output pins must be assigned. If not used, assign to 0.
-  
-  assign uo_out[7:0] = mul_avg[8:1];
-  assign uio_out[0] = mul_avg[0];
-  assign uio_out[7:1] = 7'b0;
-  assign uio_oe[7:0] = 8'b1;
-  
-  /*
-  assign uo_out[0] = mul_bit_out;
-  assign uo_out[1] = add_bit_out; 
-  assign uo_out[2] = smul_bit_out;
-  assign uo_out[3] = clk_counter[17];
-  assign uo_out[7:4] = 4'b0;
-  assign uio_out[7:0] = 8'b0;    
-  assign uio_oe[7:0]  = 8'b0;
-  */
-  // List all unused inputs to prevent warnings
-  wire _unused = &{ena, ui_in[7:2], uio_in, 1'b0}; 
-endmodule
-
-/* 
- * SUBMODULES
- */
+*/
 
 module serial_to_value_input(clk, clk_counter, rst_n, input_bit_1, output_bitseq_1, input_bit_2, output_bitseq_2);
 input wire [17:0] clk_counter;
