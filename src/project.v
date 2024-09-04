@@ -40,7 +40,33 @@ module tt_um_stochastic_addmultiply_CL123abc(
     wire mul_bit_out, add_bit_out, smul_bit_out;
     reg [17:0] clk_counter;
     
-	/* SUBMODULES:
+    serial_to_value_input global_input(.clk(clk), .clk_counter(clk_counter), .rst_n(rst_n), 
+									   .input_bit_1(ui_in[0]), .output_bitseq_1(input_1), 
+									   .input_bit_2(ui_in[1]), .output_bitseq_2(input_2));
+	
+	LFSR                 global_lsfr(.clk(clk), .rst_n(rst_n), .lfsr(lfsr));
+	
+	SN_Generators        global_SN_gen(.lfsr(lfsr), 
+	                                   .Input_1(input_1), .Input_2(input_2), 
+	                                   .SN_Bit_1(SN_Bit_1), .SN_Bit_2(SN_Bit_2), 
+	                                   .SN_Bit_sel(SN_Bit_sel));
+	
+	multiplier           mul(.SN_Bit_1(SN_Bit_1), .SN_Bit_2(SN_Bit_2), .SN_Bit_Out(SN_Bit_mul_out));
+	adder                add(.SN_Bit_1(SN_Bit_1), .SN_Bit_2(SN_Bit_2), .SN_Bit_sel(SN_Bit_sel), .SN_Bit_Out(SN_Bit_add_out));
+	self_multiplier      smul(.clk(clk), .SN_Bit_1(SN_Bit_1), .SN_Bit_Out(SN_Bit_smul_out));
+	
+	up_counter           mul_up_counter(.clk(clk), .rst_n(rst_n), .SN_Bit_Out(SN_Bit_mul_out), 
+	                                    .out_set(2'b00), .clk_counter(clk_counter), .average(mul_avg));
+    up_counter           add_up_counter(.clk(clk), .rst_n(rst_n), .SN_Bit_Out(SN_Bit_add_out), 
+                                        .out_set(2'b01), .clk_counter(clk_counter), .average(add_avg));
+    up_counter           smul_up_counter(.clk(clk), .rst_n(rst_n), .SN_Bit_Out(SN_Bit_smul_out), 
+                                         .out_set(2'b10), .clk_counter(clk_counter), .average(smul_avg));
+                                         
+    value_to_serial_output mul_output(.clk(clk), .rst_n(rst_n), .input_bits(mul_avg), .output_bit(mul_bit_out));
+    value_to_serial_output add_output(.clk(clk), .rst_n(rst_n), .input_bits(add_avg), .output_bit(add_bit_out));
+    value_to_serial_output smul_output(.clk(clk), .rst_n(rst_n), .input_bits(smul_avg), .output_bit(smul_bit_out));
+	
+    /* SUBMODULES:
      *
      * /////////////////////////////////////////////////////////////////////////////
 	 * SUBMODULE NAME:
@@ -113,32 +139,6 @@ module tt_um_stochastic_addmultiply_CL123abc(
 	 
      */
   
-    serial_to_value_input global_input(.clk(clk), .clk_counter(clk_counter), .rst_n(rst_n), 
-									   .input_bit_1(ui_in[0]), .output_bitseq_1(input_1), 
-									   .input_bit_2(ui_in[1]), .output_bitseq_2(input_2));
-	
-	LFSR                 global_lsfr(.clk(clk), .rst_n(rst_n), .lfsr(lfsr));
-	
-	SN_Generators        global_SN_gen(.lfsr(lfsr), 
-	                                   .Input_1(input_1), .Input_2(input_2), 
-	                                   .SN_Bit_1(SN_Bit_1), .SN_Bit_2(SN_Bit_2), 
-	                                   .SN_Bit_sel(SN_Bit_sel));
-	
-	multiplier           mul(.SN_Bit_1(SN_Bit_1), .SN_Bit_2(SN_Bit_2), .SN_Bit_Out(SN_Bit_mul_out));
-	adder                add(.SN_Bit_1(SN_Bit_1), .SN_Bit_2(SN_Bit_2), .SN_Bit_sel(SN_Bit_sel), .SN_Bit_Out(SN_Bit_add_out));
-	self_multiplier      smul(.clk(clk), .SN_Bit_1(SN_Bit_1), .SN_Bit_Out(SN_Bit_smul_out));
-	
-	up_counter           mul_up_counter(.clk(clk), .rst_n(rst_n), .SN_Bit_Out(SN_Bit_mul_out), 
-	                                    .out_set(2'b00), .clk_counter(clk_counter), .average(mul_avg));
-    up_counter           add_up_counter(.clk(clk), .rst_n(rst_n), .SN_Bit_Out(SN_Bit_add_out), 
-                                        .out_set(2'b01), .clk_counter(clk_counter), .average(add_avg));
-    up_counter           smul_up_counter(.clk(clk), .rst_n(rst_n), .SN_Bit_Out(SN_Bit_smul_out), 
-                                         .out_set(2'b10), .clk_counter(clk_counter), .average(smul_avg));
-                                         
-    value_to_serial_output mul_output(.clk(clk), .rst_n(rst_n), .input_bits(mul_avg), .output_bit(mul_bit_out));
-    value_to_serial_output add_output(.clk(clk), .rst_n(rst_n), .input_bits(add_avg), .output_bit(add_bit_out));
-    value_to_serial_output smul_output(.clk(clk), .rst_n(rst_n), .input_bits(smul_avg), .output_bit(smul_bit_out));
-    
 	/* SEQUENTIAL LOGIC BLOCK:
 	   The main code only controls the global clock counter and 
 	   resets after 131072+1 or (2^17)+1 clk cycles counting 0th cycle.
@@ -162,7 +162,7 @@ module tt_um_stochastic_addmultiply_CL123abc(
   assign uo_out[7:0] = mul_avg[8:1];
   assign uio_out[0] = mul_avg[7];
   assign uio_out[6:0] = 7'b0;
-  assign uio_oe[7:0] = 8'b1;
+	assign uio_oe[7:0] = 8'b10000000;
   
   /*
   assign uo_out[0] = mul_bit_out;
