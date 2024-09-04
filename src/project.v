@@ -160,9 +160,9 @@ module tt_um_stochastic_addmultiply_CL123abc(
   // All output pins must be assigned. If not used, assign to 0.
   
   assign uo_out[7:0] = mul_avg[8:1];
-  assign uio_out[0] = mul_avg[7];
-  assign uio_out[6:0] = 7'b0;
-	assign uio_oe[7:0] = 8'b10000000;
+  assign uio_out[0] = mul_avg[0];
+  assign uio_out[7:1] = 7'b0;
+  assign uio_oe[7:0] = 8'b1;
   
   /*
   assign uo_out[0] = mul_bit_out;
