@@ -254,7 +254,7 @@ input wire clk, rst_n;
 output reg [30:0] lfsr;
 	always@(posedge clk or posedge rst_n) begin
         if (rst_n == 1)
-            lfsr <= 31'd1349395;
+            lfsr <= 31'd134395;
         else begin
             lfsr[0] <= lfsr[27] ^ lfsr[30] ;
             lfsr[30:1] <= lfsr[29:0] ;
