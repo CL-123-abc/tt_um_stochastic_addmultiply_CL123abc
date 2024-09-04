@@ -85,13 +85,13 @@ module tt_um_stochastic_addmultiply_CL123abc(
   
   // PIN LAYOUT
   // All output pins must be assigned. If not used, assign to 0.
-  
+  /*
   assign uo_out[7:0] = mul_avg[8:1];
   assign uio_out[0] = mul_avg[0];
   assign uio_out[7:1] = 7'b0;
   assign uio_oe[7:0] = 8'b1;
+  */
   
-  /*
   assign uo_out[0] = mul_bit_out;
   assign uo_out[1] = add_bit_out; 
   assign uo_out[2] = smul_bit_out;
@@ -99,7 +99,7 @@ module tt_um_stochastic_addmultiply_CL123abc(
   assign uo_out[7:4] = 4'b0;
   assign uio_out[7:0] = 8'b0;    
   assign uio_oe[7:0]  = 8'b0;
-  */
+  
   // List all unused inputs to prevent warnings
   wire _unused = &{ena, ui_in[7:2], uio_in, 1'b0}; 
 endmodule
