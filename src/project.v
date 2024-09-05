@@ -156,25 +156,104 @@ endmodule
   	   SN_Generators (.lfsr(), .Input_1(), .Input_2(),
 	                  .SN_Bit_1(), .SN_Bit_2(), .SN_Bit_sel());
      * SUBMODULE DESCRIPTION:
-	 * 
+	 * Generates stochastic bits by comparing the value from the input to the random number and generates a 1 if the input is larger.
+     * The whole LFSR values is inputted so that different arrangements of its bits can result in more decorrelated random numbers.
      * INPUTS:
-     *
+     * .lfsr() takes in the 31 bit LFSR values so that the random numbers can be extracted.
+	 * .Input_1() takes in the 9bit bipolar probability value of input 1.
+     * .Input_2() takes in the 9bit bipolar probability value of input 2.
      * OUTPUTS:
-	 *
+	 * .SN_Bit_1() outputs the generated SN bit from input 1.
+     * .SN_Bit_2() outputs the generated SN bit from input 2.
+	 * .SN_Bit_sel() outputs the generated SN bit from a unipolar probability value of 0.5, meant for use as the sel in the adder.
      * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 	 *
      * /////////////////////////////////////////////////////////////////////////////
 	 * SUBMODULE NAME:
-  
+  	   multiplier (.SN_Bit_1(), .SN_Bit_2(), .SN_Bit_Out());
      * SUBMODULE DESCRIPTION:
-	 * 
+	 * Implements SN bipolar multiplication through a XNOR gate.
      * INPUTS:
-     *
+     * .SN_Bit_1() takes in a SN bit with bipolar probability.
+	 * .SN_Bit_2() takes in a SN bit with bipolar probability.
      * OUTPUTS:
-	 *
+	 * .SN_Bit_Out() outputs a SN bit with bipolar probability.
      * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 	 *
-	 
+     * /////////////////////////////////////////////////////////////////////////////
+	 * SUBMODULE NAME:
+  	   adder (.SN_Bit_1(), .SN_Bit_2(), .SN_Bit_sel(), .SN_Bit_Out());
+     * SUBMODULE DESCRIPTION:
+	 * Implements SN bipolar weighted averaging/addition through a MUX with SN_Bit_sel determining the weight of the inputs.
+     * If SN_Bit_sel has a probability of 0.5, the result is averaging with equal weight between both inputs, 
+	 * so it acts as an adder.
+     * INPUTS:
+     * .SN_Bit_1() takes in a SN bit with bipolar probability.
+	 * .SN_Bit_2() takes in a SN bit with bipolar probability.
+     * .SN_Bit_sel() takes in a SN bit with unipolar probability to determine the weight of the inputs.
+     * OUTPUTS:
+	 * .SN_Bit_Out() outputs a SN bit with bipolar probability.
+     * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+	 *
+     * /////////////////////////////////////////////////////////////////////////////
+	 * SUBMODULE NAME:
+       self_multiplier (.clk(), .SN_Bit_1(), .SN_Bit_Out());
+     * SUBMODULE DESCRIPTION:
+	 * Is supposed to implement SN bipolar self-multiplication through a XNOR gate. 
+     * Both inputs to the XNOR gate come from the same SN bit, and the bitstream is decorrelated from each other by using a D-flip flop.
+	 * However, it seems that there is still correlation in the implementation here as it currently acts as a absolute value function.
+     * INPUTS:
+     * .clk() takes in the clk of the whole circuit.
+	 * .SN_Bit_1() takes in a SN bit with bipolar probability.
+     * OUTPUTS:
+	 * .SN_Bit_Out() outputs a SN bit with bipolar probability.
+     * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+	 *
+     * /////////////////////////////////////////////////////////////////////////////
+	 * SUBMODULE NAME:
+       D_FF(.clk(), .D(), .Q());
+     * SUBMODULE DESCRIPTION:
+	 * D-flip flop. Takes D value and outputs it as Q every clk cycle.
+     * INPUTS:
+     * .clk() takes in the clk of the whole circuit.
+	 * .D() takes in 1 bit.
+     * OUTPUTS:
+	 * .Q() takes in 1 bit.
+     * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+	 *
+     * /////////////////////////////////////////////////////////////////////////////
+	 * SUBMODULE NAME:
+       up_counter (.clk(), .rst_n(), .SN_Bit_Out(), 
+	               .out_set(), .clk_counter(), .average());
+     * SUBMODULE DESCRIPTION:
+	 * Counts the number of bits in a certain number of clk cycles and outputs the 9 MSB as the bipolar probability of 1s in the SN bitstream.
+     * This code counts up to 2^17 + 1 clk cycles before outputting.
+	 * out_set was meant to control scaling, but doesn't do anything currently.
+     * INPUTS:
+     * .clk() takes in the clk of the whole circuit.
+	 * .rst_n() takes in the rst_n of the whole circuit.
+     * .SN_Bit_Out() takes in the SN bitstream to be counted.
+	 * .out_set() takes in a 2bit value to determine the case for the set of bits from the counter to be output.
+     * 			  Currently, all options (2'b00, 2'b01, 2'b10) set the 9 MSB for output.
+     * .clk_counter() takes in the global clock counter that is controlled by the main code.
+     * OUTPUTS:
+	 * .average() outputs a 9bit value, here that is the bipolar probability of 1s in the SN bitstream.
+     * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+	 *
+     * /////////////////////////////////////////////////////////////////////////////
+	 * SUBMODULE NAME:
+       value_to_serial_output mul_output(.clk(), .rst_n(), .input_bits(), .output_bit());
+     * SUBMODULE DESCRIPTION:
+	 * Outputs each bit in the 9bit input as a serial bitstream with an added 10th bit as 0 as a dummy bit.
+     * INPUTS:
+     * .clk() takes in the clk of the whole circuit.
+     * .rst_n() takes in the rst_n of the whole circuit.
+	 * .input_bits() takes in a 9bit value, here that is the bipolar probability of 1s in the SN bitstream.
+     * OUTPUTS:
+	 * .output_bit() outputs each bit in the 9bit value and then outputs 0 for the 10th bit.
+     * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+	 *
+ 
 */
 
 module serial_to_value_input(clk, clk_counter, rst_n, input_bit_1, output_bitseq_1, input_bit_2, output_bitseq_2);
