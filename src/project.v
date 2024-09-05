@@ -5,7 +5,7 @@
 
 /* Module name: tt_um_stochastic_addmultiply_CL123abc
  * Module description: 
- * Stochastic adder, multiplier and self-multiplier that takes in 9-bit inputs and gives 9-bit outputs
+ * Stochastic adder, multiplier and self-multiplier (currently abs) that takes in 9-bit inputs and gives 9-bit outputs
  * after 2^17+1 clock cycles. 
  * 
  * INPUTS: 
@@ -15,7 +15,7 @@
  * OUTPUTS:
  * uo_out[0] for serial output of 9bit (+1 bit buffer) probability result of multiplier.
  * uo_out[1] for serial output of 9bit (+1 bit buffer) probability result of adder.
- * uo_out[2] for serial output of 9bit (+1 bit buffer) probability result of self-multiplier.
+ * uo_out[2] for serial output of 9bit (+1 bit buffer) probability result of self-multiplier (currently abs).
  * uo_out[3] signals the reset of the clk_counter of the module.
  */
 
