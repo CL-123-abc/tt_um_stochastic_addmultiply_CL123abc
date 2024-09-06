@@ -10,7 +10,15 @@ You can also include images in this folder and reference them in the markdown. E
 ## How it works
 Stochastic Multiplier, Adder and Self-Multiplier. 
 Using bipolar representation, takes 2 9-bit streams as input and outputs the average product, sum and product in 9-bits after 2^17+1 clk cycles.
+![image](https://github.com/user-attachments/assets/6924e016-4e65-4bed-8944-ef4e41f4f047)
 
+![image](https://github.com/user-attachments/assets/ab88452a-30cf-4aba-b18a-996dbd8a847b)
+
+![image](https://github.com/user-attachments/assets/fcab6fb1-10ba-4726-8425-0483b531dcbb)
+
+![image](https://github.com/user-attachments/assets/efc9ba6b-c90a-40f7-8d51-2793fe7630d8)
+
+![image](https://github.com/user-attachments/assets/44a38e96-9751-43b5-a7a7-c04c945208de)
 
 ## How to test
 Input 2 repeating streams of 9 bits (+1 bit buffer) that represent the numbers to be multiplied/added and read the serial output result, which is also 9bits (+1 bit buffer).
