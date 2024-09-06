@@ -45,8 +45,9 @@ E. J. Basham and D. W. Parent, "Compact digital implementation of a quadratic in
 
 
 ## How to test
-Input 2 repeating streams of 9 bits (+1 bit buffer) that represent the numbers to be multiplied/added and read the serial output result, which is also 9bits (+1 bit buffer).
+Input 2 repeating streams of 9 bits (+1 bit buffer) that represent the numbers to be multiplied/added.
 The self multiplier only processes input from the 1st stream.
+Read the serial output result, which is also 9bits (+1 bit buffer).
 
 ## External hardware
 ADALM2000
