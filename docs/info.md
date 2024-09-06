@@ -8,10 +8,13 @@ You can also include images in this folder and reference them in the markdown. E
 -->
 
 ## How it works
-Stochastic Multiplier. Using bipolar representation, takes 2 9-bit streams as input and outputs the average product in 9-bits.
+Stochastic Multiplier, Adder and Self-Multiplier. 
+Using bipolar representation, takes 2 9-bit streams as input and outputs the average product, sum and product in 9-bits after 2^17+1 clk cycles.
+
 
 ## How to test
-Input 2 repeating streams of 9 bits that represent the numbers to be multiplied and output the result. May have to wait to check if result is accurate.
+Input 2 repeating streams of 9 bits (+1 bit buffer) that represent the numbers to be multiplied/added and read the serial output result, which is also 9bits (+1 bit buffer).
+The self multiplier only processes input from the 1st stream.
 
 ## External hardware
 ADALM2000
