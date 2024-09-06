@@ -48,12 +48,27 @@ async def test_project(dut):
     #Set input sample
     input_array1 = [0,0,0,0,0,0,1,1,0,0] # -1/4
     input_array2 = [0,0,0,0,0,0,1,1,0,0] # -1/4 
+    input_array3 = [0,0,0,0,0,0,1,0,1,0] 
+    input_array4 = [0,0,0,0,0,1,0,1,0,0]  
     # 10th bit is not read, expected result 1/16
     #Compare output to theory for each clock cycle
-    dut.ui_in[2].value = 0; #Set multiplier mode
+
     for i in range(0,n_clock):
         dut.ui_in[0].value = input_array1[i%10]
         dut.ui_in[1].value = input_array2[i%10]
+        # Wait for 1 clock cycles to see the output values
+        await ClockCycles(dut.clk, 1) 
+        
+        #The following assertion is just an example of how to check the output values.
+    
+        # Test (assert) that we are getting the expected output.
+        
+        #assert test_out_prob == out_prob[i]
+        #assert dut.uo_out[4].value == ovr_flg[i]
+    
+    for i in range(0,n_clock):
+        dut.ui_in[0].value = input_array3[i%10]
+        dut.ui_in[1].value = input_array4[i%10]
         # Wait for 1 clock cycles to see the output values
         await ClockCycles(dut.clk, 1) 
         
