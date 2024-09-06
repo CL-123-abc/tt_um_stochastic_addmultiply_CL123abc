@@ -5,18 +5,18 @@
 
 /* Module name: tt_um_stochastic_addmultiply_CL123abc
  * Module description: 
- * Stochastic adder, multiplier and self-multiplier (currently abs) that takes in 9-bit inputs and gives 9-bit outputs
+ * Stochastic adder, multiplier and self-multiplier that takes in 9-bit (+ 1 bit buffer) inputs and gives 9-bit (+ 1 bit buffer) outputs
  * after 2^17+1 clock cycles. 
- * 
+ * More details on the submodules are found after this module below.
  * INPUTS: 
- * ui_in[0] for serial input of 9bit (+1 bit buffer) probability with 1 bit buffer.
- * ui_in[1] for serial input of 9bit (+1 bit buffer) probability with 1 bit buffer.
+ * ui_in[0] for serial input of 9bit (+1 bit buffer) probability.
+ * ui_in[1] for serial input of 9bit (+1 bit buffer) probability.
  * The adder and multiplier take input from both inputs but the self-multiplier only takes input from ui_in[0].
  * OUTPUTS:
  * uo_out[0] for serial output of 9bit (+1 bit buffer) probability result of multiplier.
  * uo_out[1] for serial output of 9bit (+1 bit buffer) probability result of adder.
- * uo_out[2] for serial output of 9bit (+1 bit buffer) probability result of self-multiplier (currently abs).
- * uo_out[3] signals the reset of the clk_counter of the module.
+ * uo_out[2] for serial output of 9bit (+1 bit buffer) probability result of self-multiplier.
+ * uo_out[3] signals the inner reset of the clk_counter of the module (not rst_n).
  */
 
 `default_nettype none
@@ -34,7 +34,7 @@ module tt_um_stochastic_addmultiply_CL123abc(
 	
 	wire [8:0] input_1, input_2;
 	wire [30:0] lfsr;
-	wire SN_Bit_1, SN_Bit_2, SN_Bit_sel;
+	wire SN_Bit_1, SN_Bit_1_Input2, SN_Bit_2, SN_Bit_sel;
 	wire SN_Bit_mul_out, SN_Bit_add_out, SN_Bit_smul_out;
     wire [8:0] mul_avg, add_avg, smul_avg;
     wire mul_bit_out, add_bit_out, smul_bit_out;
@@ -46,14 +46,13 @@ module tt_um_stochastic_addmultiply_CL123abc(
 	
 	LFSR                 global_lsfr(.clk(clk), .rst_n(rst_n), .lfsr(lfsr));
 	
-	SN_Generators        global_SN_gen(.lfsr(lfsr), 
-	                                   .Input_1(input_1), .Input_2(input_2), 
-	                                   .SN_Bit_1(SN_Bit_1), .SN_Bit_2(SN_Bit_2), 
+	SN_Generators        global_SN_gen(.lfsr(lfsr), .Input_1(input_1), .Input_2(input_2), 
+	                                   .SN_Bit_1(SN_Bit_1), .SN_Bit_1_Input2(SN_Bit_1_Input2), .SN_Bit_2(SN_Bit_2), 
 	                                   .SN_Bit_sel(SN_Bit_sel));
 	
 	multiplier           mul(.SN_Bit_1(SN_Bit_1), .SN_Bit_2(SN_Bit_2), .SN_Bit_Out(SN_Bit_mul_out));
 	adder                add(.SN_Bit_1(SN_Bit_1), .SN_Bit_2(SN_Bit_2), .SN_Bit_sel(SN_Bit_sel), .SN_Bit_Out(SN_Bit_add_out));
-	self_multiplier      smul(.clk(clk), .SN_Bit_1(SN_Bit_1), .SN_Bit_Out(SN_Bit_smul_out));
+	self_multiplier      smul(.clk(clk), .SN_Bit_Input1(SN_Bit_1),.SN_Bit_Input2(SN_Bit_1_Input2), .SN_Bit_Out(SN_Bit_smul_out));
 	
 	up_counter           mul_up_counter(.clk(clk), .rst_n(rst_n), .SN_Bit_Out(SN_Bit_mul_out), 
 	                                    .out_set(2'b00), .clk_counter(clk_counter), .average(mul_avg));
@@ -153,8 +152,9 @@ endmodule
 	 *
 	 * /////////////////////////////////////////////////////////////////////////////
 	 * SUBMODULE NAME:
-  	   SN_Generators (.lfsr(), .Input_1(), .Input_2(),
-	                  .SN_Bit_1(), .SN_Bit_2(), .SN_Bit_sel());
+  	   SN_Generators (.lfsr(), .Input_1(), .Input_2(), 
+	                  .SN_Bit_1(), .SN_Bit_1_Input2(), .SN_Bit_2(), 
+	                  .SN_Bit_sel());
      * SUBMODULE DESCRIPTION:
 	 * Generates stochastic bits by comparing the value from the input to the random number and generates a 1 if the input is larger.
      * The whole LFSR values is inputted so that different arrangements of its bits can result in more decorrelated random numbers.
@@ -163,9 +163,11 @@ endmodule
 	 * .Input_1() takes in the 9bit bipolar probability value of input 1.
      * .Input_2() takes in the 9bit bipolar probability value of input 2.
      * OUTPUTS:
-	 * .SN_Bit_1() outputs the generated SN bit from input 1.
-     * .SN_Bit_2() outputs the generated SN bit from input 2.
+	 * .SN_Bit_1() outputs the generated SN bit from input 1, using its own lfsr value arrangement.
+	 * .SN_Bit_1_Input2() outputs the generated SN bit from input 1, using the same lfsr value arrangement as SN_Bit_2.
+     * .SN_Bit_2() outputs the generated SN bit from input 2, using the same lfsr value arrangement as SN_Bit_1_Input2.
 	 * .SN_Bit_sel() outputs the generated SN bit from a unipolar probability value of 0.5, meant for use as the sel in the adder.
+	 *               Uses its own lfsr value arrangement.
      * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 	 *
      * /////////////////////////////////////////////////////////////////////////////
@@ -195,16 +197,36 @@ endmodule
 	 * .SN_Bit_Out() outputs a SN bit with bipolar probability.
      * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 	 *
-     * /////////////////////////////////////////////////////////////////////////////
-	 * SUBMODULE NAME:
-       self_multiplier (.clk(), .SN_Bit_1(), .SN_Bit_Out());
+	 * /////////////////////////////////////////////////////////////////////////////
+	 * (UNUSED) SUBMODULE NAME:
+       absolute_value (.clk(), .SN_Bit_1(), .SN_Bit_Out());
      * SUBMODULE DESCRIPTION:
-	 * Is supposed to implement SN bipolar self-multiplication through a XNOR gate. 
-     * Both inputs to the XNOR gate come from the same SN bit, and the bitstream is decorrelated from each other by using a D-flip flop.
-	 * However, it seems that there is still correlation in the implementation here as it currently acts as a absolute value function.
+	 * This function was supposed to be the self-multiplier, but testing shows that it implements the 
+	 * absolute function. 
+	 * It takes in 1 input SN bitstream and uses a D-FF to generate what should be a 2nd decorrelated
+	 * bitstream with the same probability, then passes them through XNOR gate for multiplication.
+	 * Since it actually implements the absolute function, it seems that
+	 * the decorrelation did not work here as intended. 
+	 * Further testing should be done to figure out the correlation;
+	 * this same function may also be able to be implemented without the D-FF.
      * INPUTS:
      * .clk() takes in the clk of the whole circuit.
 	 * .SN_Bit_1() takes in a SN bit with bipolar probability.
+     * OUTPUTS:
+	 * .SN_Bit_Out() outputs a SN bit with bipolar probability.
+     * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+     * /////////////////////////////////////////////////////////////////////////////
+	 * SUBMODULE NAME:
+       self_multiplier (.clk(), .SN_Bit_Input1(),.SN_Bit_Input2(), .SN_Bit_Out());
+     * SUBMODULE DESCRIPTION:
+	 * This is the actual self_multiplier and it functions like the multiplier but the D-FF has been left in the bitstream.
+	 * The 2 inputs are meant to take in the SN bits generated from the same input. SN_Bit_Input1 goes through the D-FF,
+	 * but SN_Bit_Input2 does not. The 2 bits are then passed through an XNOR gate for multiplication.
+	 * THe D-FF does not need to be included for multiplication, which can be seen in multiplier.
+     * INPUTS:
+     * .clk()takes in the clk of the whole circuit.
+     * .SN_Bit_Input1()takes in a SN bit with bipolar probability, meant to be from the same input value.
+     * .SN_Bit_Input2()takes in a SN bit with bipolar probability, meant to be from the same input value.
      * OUTPUTS:
 	 * .SN_Bit_Out() outputs a SN bit with bipolar probability.
      * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -341,13 +363,14 @@ output reg [30:0] lfsr;
     end
 endmodule
 
-module SN_Generators(lfsr, Input_1, Input_2, SN_Bit_1, SN_Bit_2, SN_Bit_sel);
+module SN_Generators(lfsr, Input_1, Input_2, SN_Bit_1, SN_Bit_1_Input2, SN_Bit_2, SN_Bit_sel);
 input wire [30:0] lfsr;
 input wire [8:0] Input_1, Input_2;
-output wire SN_Bit_1, SN_Bit_2, SN_Bit_sel;
+output wire SN_Bit_1, SN_Bit_1_Input2, SN_Bit_2, SN_Bit_sel;
 
 assign SN_Bit_1 = (lfsr[8:0] < Input_1[8:0]) ;
-assign SN_Bit_2 = ({lfsr[20:12]} < Input_2[8:0]) ;
+assign SN_Bit_1_Input2 = (lfsr[20:12] < Input_2[8:0]);
+assign SN_Bit_2 = (lfsr[20:12] < Input_2[8:0]) ;
 assign SN_Bit_sel = ({lfsr[3:1], lfsr[30:26], lfsr[11]} < 9'b100000000);
 wire unused = &{1'b0, lfsr[25:21], lfsr[10:9], 1'b0};
 endmodule
@@ -366,13 +389,24 @@ output wire SN_Bit_Out;
 assign SN_Bit_Out = (SN_Bit_sel == 0) ? SN_Bit_1 : SN_Bit_2;
 endmodule
 
-module self_multiplier(clk, SN_Bit_1, SN_Bit_Out);
+/*UNUSED
+module absolute_value(clk, SN_Bit_1, SN_Bit_Out);
 input wire clk, SN_Bit_1;
 output wire SN_Bit_Out; 
 wire SN_Bit_Q;
 D_FF delay_1_SN_Bit(clk, SN_Bit_1, SN_Bit_Q);
 
 assign SN_Bit_Out = !(SN_Bit_1 ^ SN_Bit_Q);
+endmodule
+*/
+
+module self_multiplier(clk, SN_Bit_Input1, SN_Bit_Input2, SN_Bit_Out);
+input wire clk, SN_Bit_Input1, SN_Bit_Input2;
+output wire SN_Bit_Out; 
+wire SN_Bit_Q;
+D_FF delay_1_SN_Bit(clk, SN_Bit_Input1, SN_Bit_Q);
+
+assign SN_Bit_Out = !(SN_Bit_Q ^ SN_Bit_Input2);
 endmodule
 
 module D_FF(clk, D, Q);
