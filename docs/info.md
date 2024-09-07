@@ -8,7 +8,7 @@ You can also include images in this folder and reference them in the markdown. E
 -->
 
 ## How it works
-![image](https://github.com/user-attachments/assets/ac4eac13-3438-4cea-b1ef-bf8e69d9c664)
+![image](https://github.com/user-attachments/assets/dbddf49e-d35e-47eb-a7e5-c2787ef7c5f3)
 
 ![image](https://github.com/user-attachments/assets/6e3752d7-a5d7-4eb7-84ed-525289fe7e87)
 
