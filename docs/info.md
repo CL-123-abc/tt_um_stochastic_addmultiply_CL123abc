@@ -14,7 +14,7 @@ You can also include images in this folder and reference them in the markdown. E
 
 ![image](https://github.com/user-attachments/assets/fcab6fb1-10ba-4726-8425-0483b531dcbb)
 
-![image](https://github.com/user-attachments/assets/efc9ba6b-c90a-40f7-8d51-2793fe7630d8)
+![image](https://github.com/user-attachments/assets/ad490770-c5ff-4a38-80ed-b8bf44b42c7c)
 
 ![image](https://github.com/user-attachments/assets/44a38e96-9751-43b5-a7a7-c04c945208de)
 
