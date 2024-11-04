@@ -474,7 +474,7 @@ output reg output_bit;
                 bitseq <= input_bits >> 1;
                 counter <= counter + 4'b1;
             end
-			if (counter == 4'd9) begin
+			else if (counter == 4'd9) begin
                 output_bit <= 0;
                 counter <= 4'b0;
             end
