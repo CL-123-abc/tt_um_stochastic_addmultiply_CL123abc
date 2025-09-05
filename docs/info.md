@@ -7,17 +7,6 @@ You can also include images in this folder and reference them in the markdown. E
 512 kb in size, and the combined size of all images must be less than 1 MB.
 -->
 
-## How it works
-![image](https://github.com/user-attachments/assets/dbddf49e-d35e-47eb-a7e5-c2787ef7c5f3)
-
-![image](https://github.com/user-attachments/assets/6e3752d7-a5d7-4eb7-84ed-525289fe7e87)
-
-![image](https://github.com/user-attachments/assets/fcab6fb1-10ba-4726-8425-0483b531dcbb)
-
-![image](https://github.com/user-attachments/assets/ad490770-c5ff-4a38-80ed-b8bf44b42c7c)
-
-![image](https://github.com/user-attachments/assets/2a6e2724-3a6d-45ea-a9bd-53ffd2f4bae9)
-
 
 REFERENCES USED
 ​
