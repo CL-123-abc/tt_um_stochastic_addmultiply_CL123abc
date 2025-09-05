@@ -8,13 +8,11 @@ You can also include images in this folder and reference them in the markdown. E
 -->
 
 ## How it works
+Having trouble with docs failing on old run.  Just a check
 
-Explain how your project works
-xx
 ## How to test
 
-Explain how to use your project. xx
+Wire up to ADALM and run test .
 
 ## External hardware
-xx
-List external hardware used in your project (e.g. PMOD, LED display, etc), if a
+ADLAM2000
