@@ -8,9 +8,13 @@ You can also include images in this folder and reference them in the markdown. E
 -->
 
 ## How it works
-Testing why docs fails.
+
+Explain how your project works
+xx
 ## How to test
-Set ui_in_0 with a constant high and ui_in_1 with constant low to see the equations described. 
+
+Explain how to use your project. xx
 
 ## External hardware
-ADALM2000
+xx
+List external hardware used in your project (e.g. PMOD, LED display, etc), if a
