@@ -1,13 +1,12 @@
-# Game Of Life - (John Conway) remake on ASIC
+# Stochastic add and multiply dual signal encoding
 ## How it works
-The registers are randomized, and then the algorithm for the game of like is run.
 
-Oxman, G., Weiss, S. and Be’ery, Y., 2014. Computational methods for Conway's Game of Life cellular automaton. Journal of Computational Science, 5(1), pp.24-31.
+The data is converted from binary-weighted to a serial probability code data stream with two signals, allowing negative numbers to be processed by a stochastic computer.  Then multiple and add operations are computed and converted back into a serial binary weighted stream.
 
 ## How to test
 
-Once the ASIC is powered, it should automatically turn on and generate cellular automata patterns according to the Game of Life's rules. by inputting a high signal to port 0 it stops the simulation where it was, and inputting a high signal to port 1 it will randomize the game.
+Input two serial binary weighted serial streams in 2-complement format. Begin reading the data when the serial clock signal goes high.  
 
 ## External hardware
 
-a  [Tiny Tapeout VGA Pmod](https://store.tinytapeout.com/products/TinyVGA-Pmod-p678647356). and possibly buttons or switches im unsure for port 0 and 1
+ADALM2000 and Python to set up the serial data stream and to analyze the data coming out.
