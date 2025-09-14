@@ -8,13 +8,7 @@ You can also include images in this folder and reference them in the markdown. E
 -->
 
 ## How it works
-![image](https://github.com/user-attachments/assets/dbddf49e-d35e-47eb-a7e5-c2787ef7c5f3)
-![image](https://github.com/user-attachments/assets/6e3752d7-a5d7-4eb7-84ed-525289fe7e87)
-![image](https://github.com/user-attachments/assets/fcab6fb1-10ba-4726-8425-0483b531dcbb)
-![image](https://github.com/user-attachments/assets/ad490770-c5ff-4a38-80ed-b8bf44b42c7c)
-![image](https://github.com/user-attachments/assets/2a6e2724-3a6d-45ea-a9bd-53ffd2f4bae9)
-REFERENCES USED
-​
+
 General Stochastic Computing Design:​
 [1] A. Alaghi, W. Qian, and J. P. Hayes, “The Promise and Challenge of Stochastic Computing,” IEEE Trans. Comput. Aided Des. Integr. Circuits Syst., vol. 37, no. 8, pp. 1515–1531, Aug. 2018, doi: 10.1109/TCAD.2017.2778107.​
 [2] B. R. Gaines, “Stochastic computing,” in Proceedings of the April 18-20, 1967, Spring Joint Computer Conference, in AFIPS ’67 (Spring). New York, NY, USA: Association for Computing Machinery, Apr. 1967, pp. 149–156. doi: 10.1145/1465482.1465505.​
